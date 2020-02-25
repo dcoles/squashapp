@@ -80,7 +80,7 @@ function squashapp_mount {
         exit 1
     fi
 
-    if ! squashfuse -o offset="${offset}" "${SQUASHAPP}" "${mountpoint}"; then
+    if ! squashfuse -o offset="${offset}" -o ro "${SQUASHAPP}" "${mountpoint}"; then
         error "Failed to mount ${SQUASHAPP} (offset: ${offset})"
         rmdir "${mountpoint}"
         exit 1
