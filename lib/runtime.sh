@@ -7,11 +7,12 @@ SQUASHAPP_RUNTIME_VER=0.1
 function usage {
     log "Usage: $0 [options] ..."
     log "SquashApp options:"
-    log "	--squashapp-extract   extract SquashFS as ${SQUASHAPP_NAME}.squash"
-    log "	--squashapp-mount     mount SquashFS volume and print mountpoint"
-    log "	--squashapp-offset    print offset of SquashFS data"
-    log "	--squashapp-verify    check digest of SquashFS data matches"
-    log "	--squashapp-help      show help (this text)"
+    log "	--squashapp-extract     extract SquashFS as ${SQUASHAPP_NAME}.squash"
+    log "	--squashapp-mount       mount SquashFS volume and print mountpoint"
+    log "	--squashapp-offset      print offset of SquashFS data"
+    log "	--squashapp-verify      check digest of SquashFS data matches"
+    log "	--squashapp-end         stop processing SquashApp options"
+    log "	--squashapp-help        show help (this text)"
 }
 
 function log {
@@ -147,6 +148,10 @@ function main {
                 fi
                 log "OK ${digest}"
                 exit 0
+                ;;
+            --squashapp-end)
+                shift
+                break
                 ;;
             --squashapp-help)
                 usage
