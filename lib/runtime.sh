@@ -67,6 +67,11 @@ function squashapp_sha256_digest {
 function squashapp_mount {
     local offset="${1:?}"
 
+    if ! which squashfuse > /dev/null; then
+        error "Could not find squashfuse. Please install before use."
+        exit 1
+    fi
+
     local mountpoint
     mountpoint="$(mktemp -d -t squashapp.XXXXXXXXXX)"
 
