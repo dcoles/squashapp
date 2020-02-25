@@ -163,7 +163,9 @@ function main {
                 exit 2
                 ;;
             *)
-                continue
+                # First non-SquashApp argument
+                break
+                ;;
         esac
         shift
     done
