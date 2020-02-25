@@ -8,7 +8,13 @@ GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
 
 function usage {
-    log "Usage: $0 [options] <sourcedir> [<main>]"
+    log "Usage: $0 [--embed] [-h|--help] <sourcedir> [<main>]"
+    log "Options and arguments:"
+    log "    --embed        embed runtime into SquashApp"
+    log "    -h, --help     show help (this text)"
+    log
+    log "    <sourcedir>    directory to build SquashApp from"
+    log "    <main>         relative path of main executable (default: \`basename <sourcedir>\`)"
 }
 
 function log {

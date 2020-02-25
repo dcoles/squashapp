@@ -12,7 +12,13 @@ A self-extracting SquashFS application builder.
 ## Building a SquashApp
 
 ```bash
-build_squashapp [options] <sourcedir> [<main>]
+Usage: ./build_squashapp [--embed] [-h|--help] <sourcedir> [<main>]
+Options and arguments:
+    --embed        embed runtime into SquashApp
+    -h, --help     show help (this text)
+
+    <sourcedir>    directory to build SquashApp from
+    <main>         relative path of main executable (default: `basename <sourcedir>`)
 ```
 
 For example:
@@ -20,6 +26,8 @@ For example:
 ```bash
 build_squashapp examples/helloworld/ bin/helloworld
 ```
+
+This will produce a SquashApp named `helloworld.run`.
 
 
 # Running a SquashApp
