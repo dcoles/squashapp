@@ -29,3 +29,8 @@ Just run it like any ordinary executable!
 ```bash
 ./helloworld.run "${USER}"
 ```
+
+
+# License
+
+Licensed under the [MIT License](/LICENSE).
