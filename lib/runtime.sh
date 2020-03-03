@@ -106,7 +106,14 @@ function run_main {
         local mountpoint="${1:?}"
         shift
 
-        exec -a "${SQUASHAPP_ARGV0}" "${mountpoint}/${SQUASHAPP_MAIN}" "$@"
+        (
+            set -o allexport
+            SQUASHAPP_MOUNT="${mountpoint}"
+            if [[ -e "${mountpoint}/.env" ]]; then
+                . "${mountpoint}/.env"
+            fi
+            exec -a "${SQUASHAPP_ARGV0}" "${mountpoint}/${SQUASHAPP_MAIN}" "$@"
+        )
     )
 }
 
