@@ -5,6 +5,6 @@ The "Hello, world!" SquashApp.
 It can be built and run as follows:
 
 ```bash
-./build_squashapp --embed examples/helloworld
+./build_squashapp examples/helloworld
 ./helloworld.run 'name'
 ```

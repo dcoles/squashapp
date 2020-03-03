@@ -8,9 +8,9 @@ GREEN="$(tput setaf 2)"
 RESET="$(tput sgr0)"
 
 function usage {
-    log "Usage: $0 [--embed] [-h|--help] <sourcedir> [<main>]"
+    log "Usage: $0 [--noembed] [-h|--help] <sourcedir> [<main>]"
     log "Options and arguments:"
-    log "    --embed        embed runtime into SquashApp"
+    log "    --noembed      don't embed runtime into SquashApp"
     log "    -h, --help     show help (this text)"
     log
     log "    <sourcedir>    directory to build SquashApp from"
@@ -30,7 +30,7 @@ function error {
 }
 
 # Flags
-FLAG_EMBED=
+FLAG_NOEMBED=
 
 for arg in "$@"; do
     case "${arg}" in
@@ -38,8 +38,8 @@ for arg in "$@"; do
             shift
             break
             ;;
-        --embed)
-            FLAG_EMBED=1
+        --noembed)
+            FLAG_NOEMBED=1
             ;;
         -h|--help)
             usage
@@ -97,13 +97,13 @@ SQUASHAPP_SHA256="$(sha256sum -b "${SQUASHFS}" | cut -d ' ' -f 1)"
 
 status "Building ${SQUASHAPP}..."
 FRAGMENTS=()
-if [[ -n "${FLAG_EMBED}" ]]; then
+if [[ -n "${FLAG_NOEMBED}" ]]; then
+    INTERPRETER='/usr/bin/env squashapp_helper'
+    FRAGMENTS+=( "${BASEDIR}"/lib/stub-runtime.sh )
+else
     log 'Embedding runtime'
     INTERPRETER="${SQUASHAPP_SHELL}"
     FRAGMENTS+=( "${BASEDIR}"/lib/runtime.sh )
-else
-    INTERPRETER='/usr/bin/env squashapp_helper'
-    FRAGMENTS+=( "${BASEDIR}"/lib/stub-runtime.sh )
 fi
 FOOTER=$'\nexit 99\n# EOF'
 

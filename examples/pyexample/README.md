@@ -6,7 +6,7 @@ It can be built and run as follows:
 
 ```bash
 tools/prepare_python examples/pyexample/usr/src/pyexample examples/pyexample
-./build_squashapp --embed examples/pyexample usr/bin/pyexample
+./build_squashapp examples/pyexample usr/bin/pyexample
 ./pyexample.run https://httpbin.org/get
 ```
 

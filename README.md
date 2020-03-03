@@ -12,9 +12,9 @@ A self-extracting SquashFS application builder.
 ## Building a SquashApp
 
 ```bash
-Usage: ./build_squashapp [--embed] [-h|--help] <sourcedir> [<main>]
+Usage: ./build_squashapp [--noembed] [-h|--help] <sourcedir> [<main>]
 Options and arguments:
-    --embed        embed runtime into SquashApp
+    --noembed      don't embed runtime into SquashApp
     -h, --help     show help (this text)
 
     <sourcedir>    directory to build SquashApp from
