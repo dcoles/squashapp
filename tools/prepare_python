@@ -1,0 +1,16 @@
+#!/bin/bash
+# Prepare a Python app so it's suitable for use as a SquashApp
+
+PYTHON=/usr/bin/python3
+PREFIX=/usr
+
+if [[ $# -lt 2 ]]; then
+    echo >&2 "Usage: $0 <pyproject> <target>"
+    exit 2
+fi
+
+PYPROJECT="$1"
+TARGET="$2"
+
+"${PYTHON}" -m pip install --isolated --ignore-installed \
+        --prefix "${PREFIX}" --root "${TARGET}" "${PYPROJECT}"
