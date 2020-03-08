@@ -10,4 +10,4 @@ if ! [[ -e "${BUSYBOX}" ]]; then
     exit 1
 fi
 
-exec -a "$0" ${BUSYBOX} "$@"
+exec -a "${SQUASHAPP_ARGV0}" "${BUSYBOX}" "$@"

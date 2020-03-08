@@ -109,6 +109,8 @@ function run_main {
 
         (
             set -o allexport
+            SQUASHAPP_NAME="${SQUASHAPP_NAME}"
+            SQUASHAPP_ARGV0="${SQUASHAPP_ARGV0}"
             SQUASHAPP_MOUNT="${mountpoint}"
             if [[ -e "${mountpoint}/.env" ]]; then
                 . "${mountpoint}/.env"
