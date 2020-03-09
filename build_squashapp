@@ -29,6 +29,10 @@ function error {
     echo >&2 "${RED}ERROR: $*${RESET}"
 }
 
+function contains_executable {
+    (cd "${1:?}" && [[ -n "$(find . -wholename ./"${2:?}" -executable)" ]])
+}
+
 # Flags
 FLAG_NOEMBED=
 
@@ -62,25 +66,37 @@ if [[ $# -lt 1 || $# -gt 2 ]]; then
     exit 2
 fi
 
+# Check SOURCE is valid
 SOURCE="$1"
-NAME="$(basename -- "${SOURCE}")"
-SQUASHAPP_MAIN="${2:-bin/${NAME}}"
-SQUASHAPP_SHELL=${SQUASHAPP_SHELL:-/bin/bash}
-SQUASHAPP="${NAME}.run"
-
-# Sanity checking
 if ! [[ -d "${SOURCE}" ]]; then
     error "${SOURCE} is not a directory"
     exit 1
 fi
 
+# Shell used for interpreting SquashApp
+SQUASHAPP_SHELL=${SQUASHAPP_SHELL:-/bin/bash}
 if ! [[ -x "${SQUASHAPP_SHELL}" ]]; then
     error "${SQUASHAPP_SHELL} is not a valid executable"
     exit 1
 fi
 
-if ! (cd "${SOURCE}" && [[ -n "$(find . -wholename ./"${SQUASHAPP_MAIN}" -executable)" ]]); then
-    error "Could not find executable ${SQUASHAPP_MAIN} in ${1}"
+# Search for main
+NAME="$(basename -- "${SOURCE}")"
+if [[ $# -gt 1 ]]; then
+    MAIN_PATH=("$2")
+else
+    MAIN_PATH=(init bin/"${NAME}")
+fi
+
+for path in "${MAIN_PATH[@]}"; do
+    if contains_executable "${SOURCE}" "${path}"; then
+        SQUASHAPP_MAIN="${path}"
+        break
+    fi
+done
+
+if ! [[ -v SQUASHAPP_MAIN ]]; then
+    error "No main found in "$1" (Tried ${MAIN_PATH[*]})"
     log "Note: <main> must be relative to <dir> (e.g. \"bin/${NAME}\")"
     exit 1
 fi
@@ -92,6 +108,7 @@ status "Building ${SQUASHFS}..."
 mksquashfs "${SOURCE}" "${SQUASHFS}" -noappend -all-root -comp xz
 
 # Build SquashApp
+SQUASHAPP="${NAME}.run"
 SQUASHAPP_FSSIZE="$(wc -c < "${SQUASHFS}")"
 SQUASHAPP_SHA256="$(sha256sum -b "${SQUASHFS}" | cut -d ' ' -f 1)"
 
