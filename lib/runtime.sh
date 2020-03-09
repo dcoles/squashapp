@@ -75,7 +75,7 @@ function squashapp_mount {
     fi
 
     local mountpoint
-    mountpoint="$(mktemp -d -t squashapp.XXXXXXXXXX)"
+    mountpoint="$(mktemp -d -t squashapp-"$$".XXXXXXXXXX)"
 
     if ! [[ -d "${mountpoint}" ]]; then
         error "Failed to create mountpoint"
