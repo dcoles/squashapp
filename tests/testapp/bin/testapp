@@ -1,0 +1,13 @@
+#!/bin/bash
+# A simple app that prints its environment
+
+# Print args
+ARGV=("$0" "$@")
+for n in $(seq 0 $#); do
+    echo "ARGV${n}: ${ARGV[n]}"
+done
+
+echo "SQUASHAPP_NAME: ${SQUASHAPP_NAME}"
+echo "SQUASHAPP_MAIN: ${SQUASHAPP_MAIN}"
+echo "SQUASHAPP_ARGV0: ${SQUASHAPP_ARGV0}"
+echo "SQUASHAPP_MOUNT: ${SQUASHAPP_MOUNT}"
