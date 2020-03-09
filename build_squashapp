@@ -3,9 +3,9 @@
 set -e -u
 
 BASEDIR="$(dirname "${BASH_SOURCE[0]}")"
-RED="$(tput setaf 1)"
-GREEN="$(tput setaf 2)"
-RESET="$(tput sgr0)"
+RED="$(tput -T xterm setaf 1)"
+GREEN="$(tput -T xterm setaf 2)"
+RESET="$(tput -T xterm sgr0)"
 
 function usage {
     log "Usage: $0 [--noembed] [-h|--help] <sourcedir> [<main>]"
