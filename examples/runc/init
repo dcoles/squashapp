@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+if ! [[ -e /bin/busybox ]]; then
+    echo >&2 'ERROR: This example requires /bin/busybox installed'
+    exit 1
+fi
+
+if ! [[ -v SQUASHAPP_MOUNT ]]; then
+    echo >&2 'ERROR: This script is expected to be called from inside a SquashApp'
+    exit 1
+fi
+
+cd "${SQUASHAPP_MOUNT}"
+exec runc run "squashapp-$$"
