@@ -4,11 +4,16 @@ SQUASHAPP_NAME="$(basename "$0" .run)"
 SQUASHAPP_ARGV0="$(dirname "$0")/${SQUASHAPP_NAME}"
 SQUASHAPP_RUNTIME_VER=0.1
 
+SQUASHAPP_USE_KERNEL=
+
+set -x
+
 function usage {
     log "Usage: $0 [options] ..."
     log "SquashApp options:"
     log "	--squashapp-extract     extract SquashFS as ${SQUASHAPP_NAME}.squash"
     log "	--squashapp-mount       mount SquashFS volume and print mountpoint"
+    log "	--squashapp-use-kernel  use kernel squashfs implementation"
     log "	--squashapp-main <path> run alternative main"
     log "	--squashapp-offset      print offset of SquashFS data"
     log "	--squashapp-verify      check digest of SquashFS data matches"
@@ -82,10 +87,24 @@ function squashapp_mount {
         exit 1
     fi
 
-    if ! squashfuse -o offset="${offset}" -o ro "${SQUASHAPP}" "${mountpoint}"; then
-        error "Failed to mount ${SQUASHAPP} (offset: ${offset})"
-        rmdir "${mountpoint}"
-        exit 1
+    if test -n "${SQUASHAPP_USE_KERNEL}"; then
+        set -x
+
+        if ! sudo sh -s <<EOF ; then
+set -e -x
+mount -t squashfs -o user,loop,offset="${offset}",ro,exec "${SQUASHAPP}" "${mountpoint}"
+sh -c '(cd "${mountpoint}" && setpriv --reuid="\${SUDO_UID}" --inh-caps=-all sleep 100); umount -d "${mountpoint}"' &
+EOF
+            error "Failed to mount ${SQUASHAPP} (offset: ${offset})"
+            rmdir "${mountpoint}"
+            exit 1
+        fi
+    else
+        if ! squashfuse -o offset="${offset}" -o ro "${SQUASHAPP}" "${mountpoint}"; then
+            error "Failed to mount ${SQUASHAPP} (offset: ${offset})"
+            rmdir "${mountpoint}"
+            exit 1
+        fi
     fi
 
     echo "${mountpoint}"
@@ -96,7 +115,12 @@ function squashapp_mount {
 function squashapp_unmount {
     local path="${1:?}"
 
-    fusermount -u -- "${path}"
+    fuser -skmM "${path}" || true
+
+    if ! test -n "${SQUASHAPP_USE_KERNEL}"; then
+        fusermount -u "${path}"
+    fi
+
     rmdir "${path}"
 }
 
@@ -146,6 +170,9 @@ function main {
                 mountpoint="$(squashapp_mount "${offset}")"
                 log "Mounted to ${mountpoint}"
                 exit 0
+                ;;
+            --squashapp-use-kernel)
+                SQUASHAPP_USE_KERNEL=1
                 ;;
             --squashapp-offset)
                 echo "${offset}"
